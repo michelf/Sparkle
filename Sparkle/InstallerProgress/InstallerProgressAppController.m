@@ -292,8 +292,15 @@ static const NSTimeInterval SUTerminationTimeDelay = 0.3;
             
             // Note: the application icon needs to be set after showing the icon in the dock
             SUHost *host = [[SUHost alloc] initWithBundle:self.hostBundle];
-            self.application.applicationIconImage = [SUApplicationInfo bestIconForHost:host];
-            
+            NSImage *hostIcon = [SUApplicationInfo bestIconForHost:host];
+            NSImage *overlay = [NSImage imageNamed:@"Overlay"];
+            NSImage *finalImage = [NSImage imageWithSize:hostIcon.size flipped:NO drawingHandler:^BOOL(NSRect iconRect) {
+                [hostIcon drawInRect:NSInsetRect(iconRect, iconRect.size.width/5, iconRect.size.width/5)];
+                [overlay drawInRect:iconRect];
+                return true;
+            }];
+            self.application.applicationIconImage = finalImage;
+
             // Activate ourselves otherwise we will probably be in the background
             [self.application activateIgnoringOtherApps:YES];
             
